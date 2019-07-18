@@ -38,8 +38,12 @@ bool TranslatorVisitor::arm_SVC(Cond cond, Imm<24> imm24) {
 }
 
 // UDF<c> #<imm16>
+#if ARCHITECTURE_x86_64
 bool TranslatorVisitor::arm_UDF() {
     return UndefinedInstruction();
+#else
+    return InterpretThisInstruction();
+#endif
 }
 
 } // namespace Dynarmic::A32
