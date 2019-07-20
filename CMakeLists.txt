@@ -107,10 +107,10 @@ endif()
 
 # Arch detection
 include(DetectArchitecture)
-if (NOT DEFINED ARCHITECTURE)
+if (NOT DEFINED DYNARMIC_ARCHITECTURE)
     message(FATAL_ERROR "Unsupported architecture encountered. Ending CMake generation.")
 endif()
-message(STATUS "Target architecture: ${ARCHITECTURE}")
+message(STATUS "Target architecture: ${DYNARMIC_ARCHITECTURE}")
 
 # Include Boost
 if (NOT TARGET boost)

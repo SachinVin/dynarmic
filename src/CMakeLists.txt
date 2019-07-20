@@ -260,7 +260,7 @@ if ("A64" IN_LIST DYNARMIC_FRONTENDS)
     )
 endif()
 
-if (ARCHITECTURE STREQUAL "x86_64")
+if (DYNARMIC_ARCHITECTURE STREQUAL "x86_64")
     target_sources(dynarmic PRIVATE
         backend/x64/abi.cpp
         backend/x64/abi.h
@@ -356,7 +356,7 @@ if (ARCHITECTURE STREQUAL "x86_64")
     endif()
 
     target_link_libraries(dynarmic PRIVATE xbyak)
-elseif(ARCHITECTURE_Aarch64)
+elseif(DYNARMIC_ARCHITECTURE STREQUAL "arm64")
     target_sources(dynarmic PRIVATE
          backend/A64/emitter/a64_emitter.cpp
          backend/A64/emitter/a64_emitter.h

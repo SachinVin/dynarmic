@@ -1,13 +1,13 @@
 include(CheckSymbolExists)
 
 function(detect_architecture symbol arch)
-    if (NOT DEFINED ARCHITECTURE)
+    if (NOT DEFINED DYNARMIC_ARCHITECTURE)
         set(CMAKE_REQUIRED_QUIET YES)
         check_symbol_exists("${symbol}" "" DETECT_ARCHITECTURE_${arch})
         unset(CMAKE_REQUIRED_QUIET)
 
         if (DETECT_ARCHITECTURE_${arch})
-            set(ARCHITECTURE "${arch}" PARENT_SCOPE)
+            set(DYNARMIC_ARCHITECTURE "${arch}" PARENT_SCOPE)
         endif()
 
         unset(DETECT_ARCHITECTURE_${arch} CACHE)
