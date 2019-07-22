@@ -390,7 +390,7 @@ elseif(DYNARMIC_ARCHITECTURE STREQUAL "arm64")
          # backend/A64/emit_a64_crc32.cpp
          backend/A64/emit_a64_data_processing.cpp
          backend/A64/emit_a64_floating_point.cpp
-         # backend/A64/emit_a64_packed.cpp
+         backend/A64/emit_a64_packed.cpp
          # backend/A64/emit_a64_saturation.cpp
          # backend/A64/emit_a64_sm4.cpp
          # backend/A64/emit_a64_vector.cpp
