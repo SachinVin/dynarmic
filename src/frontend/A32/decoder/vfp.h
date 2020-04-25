@@ -35,7 +35,6 @@ std::optional<std::reference_wrapper<const VFPMatcher<V>>> DecodeVFP(u32 instruc
 #include "vfp2_a64.inc"
 #else
 #include "vfp.inc"
-#endif
 #undef INST
 
         };
