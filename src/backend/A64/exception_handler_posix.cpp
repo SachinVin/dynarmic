@@ -12,7 +12,11 @@
 #include <vector>
 
 #include <csignal>
+#ifdef __APPLE__
+#include <sys/ucontext.h>
+#else
 #include <ucontext.h>
+#endif
 
 #include "backend/A64/a32_jitstate.h"
 #include "backend/A64/block_of_code.h"
@@ -99,7 +103,11 @@ void SigHandler::SigAction(int sig, siginfo_t* info, void* raw_context) {
     ASSERT(sig == SIGSEGV || sig == SIGBUS);
 
     std::lock_guard<std::mutex> guard(sig_handler.code_block_infos_mutex);
+#ifdef __APPLE__
+    auto PC = reinterpret_cast<CodePtr>(((ucontext_t*)raw_context)->uc_mcontext->__ss.__pc);
+#else
     auto PC = reinterpret_cast<CodePtr>(((ucontext_t*)raw_context)->uc_mcontext.pc);
+#endif
     const auto iter = sig_handler.FindCodeBlockInfo(PC);
     if (iter != sig_handler.code_block_infos.end()) {
         iter->callback(PC);
