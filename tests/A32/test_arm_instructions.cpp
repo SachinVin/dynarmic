@@ -464,6 +464,7 @@ TEST_CASE("arm: PackedAbsDiffSumS8", "[arm][A32]") {
     REQUIRE(jit.Regs()[14] == 0xe591fd11);
     REQUIRE(jit.Regs()[15] == 0x00000008);
     REQUIRE(jit.Cpsr() == 0xb0000010);
+}
 
 TEST_CASE("arm: Cleared Q flag", "[arm][A32]") {
     ArmTestEnv test_env;
