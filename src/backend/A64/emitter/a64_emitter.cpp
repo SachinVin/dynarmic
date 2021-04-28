@@ -8,6 +8,10 @@
 #include <cstring>
 #include <vector>
 
+#if defined(__APPLE__)
+#include <libkern/OSCacheControl.h>
+#endif
+
 #include "a64_emitter.h"
 #include "common/assert.h"
 #include "common/bit_util.h"
@@ -366,6 +370,8 @@ void ARM64XEmitter::FlushIcacheSection(const u8* start, const u8* end) {
     // Header file says this is equivalent to: sys_icache_invalidate(start, end -
     // start);
     sys_cache_control(kCacheFunctionPrepareForExecution, start, end - start);
+#elif defined(__APPLE__)
+    sys_icache_invalidate(const_cast<u8*>(start), end - start);
 #else
     // Don't rely on GCC's __clear_cache implementation, as it caches
     // icache/dcache cache line sizes, that can vary between cores on

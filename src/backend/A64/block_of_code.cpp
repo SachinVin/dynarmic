@@ -20,6 +20,10 @@
     #include <sys/mman.h>
 #endif
 
+#ifdef __APPLE__
+#include <pthread.h>
+#endif
+
 namespace Dynarmic::BackendA64 {
 
 const Arm64Gen::ARM64Reg BlockOfCode::ABI_RETURN  = Arm64Gen::ARM64Reg::X0;
@@ -86,11 +90,17 @@ void BlockOfCode::EnableWriting() {
 #ifdef DYNARMIC_ENABLE_NO_EXECUTE_SUPPORT
     ProtectMemory(GetCodePtr(), TOTAL_CODE_SIZE, false);
 #endif
+#ifdef __APPLE__
+    pthread_jit_write_protect_np(false);
+#endif
 }
 
 void BlockOfCode::DisableWriting() {
 #ifdef DYNARMIC_ENABLE_NO_EXECUTE_SUPPORT
     ProtectMemory(GetCodePtr(), TOTAL_CODE_SIZE, true);
+#endif
+#ifdef __APPLE__
+    pthread_jit_write_protect_np(true);
 #endif
 }
 
