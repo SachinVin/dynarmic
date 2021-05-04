@@ -8,9 +8,25 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(MASTER_PROJECT ON)
 endif()
 
+# Add the module directory to the list of paths
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
+
+# Arch detection
+include(DetectArchitecture)
+if (NOT DEFINED DYNARMIC_ARCHITECTURE)
+    message(FATAL_ERROR "Unsupported architecture encountered. Ending CMake generation.")
+endif()
+message(STATUS "Target architecture: ${DYNARMIC_ARCHITECTURE}")
+
+set(REQUIRES_NO_EXECUTE_SUPPORT OFF)
+#Apple Silicon chips require W^X
+if(APPLE AND ARCHITECTURE_Aarch64)
+    set(REQUIRES_NO_EXECUTE_SUPPORT ON)
+endif()
+
 # Dynarmic project options
 option(DYNARMIC_ENABLE_CPU_FEATURE_DETECTION "Turning this off causes dynarmic to assume the host CPU doesn't support anything later than SSE3" ON)
-option(DYNARMIC_ENABLE_NO_EXECUTE_SUPPORT "Enables support for systems that require W^X" OFF)
+option(DYNARMIC_ENABLE_NO_EXECUTE_SUPPORT "Enables support for systems that require W^X" ${REQUIRES_NO_EXECUTE_SUPPORT})
 option(DYNARMIC_FATAL_ERRORS "Errors are fatal" OFF)
 option(DYNARMIC_TESTS "Build tests" ${MASTER_PROJECT})
 option(DYNARMIC_TESTS_USE_UNICORN "Enable fuzzing tests against unicorn" OFF)
@@ -37,9 +53,6 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
     message(SEND_ERROR "In-source builds are not allowed.")
 endif()
-
-# Add the module directory to the list of paths
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/CMakeModules")
 
 # Compiler flags
 if (MSVC)
@@ -104,13 +117,6 @@ else()
         list(APPEND DYNARMIC_CXX_FLAGS -fbracket-depth=1024)
     endif()
 endif()
-
-# Arch detection
-include(DetectArchitecture)
-if (NOT DEFINED DYNARMIC_ARCHITECTURE)
-    message(FATAL_ERROR "Unsupported architecture encountered. Ending CMake generation.")
-endif()
-message(STATUS "Target architecture: ${DYNARMIC_ARCHITECTURE}")
 
 # Include Boost
 if (NOT TARGET boost)
