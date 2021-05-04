@@ -52,9 +52,11 @@ constexpr size_t FAR_CODE_OFFSET = 100 * 1024 * 1024;
 
 #ifdef DYNARMIC_ENABLE_NO_EXECUTE_SUPPORT
 void ProtectMemory(const void* base, size_t size, bool is_executable) {
-#ifdef _WIN32
+#if defined(_WIN32)
     DWORD oldProtect = 0;
     VirtualProtect(const_cast<void*>(base), size, is_executable ? PAGE_EXECUTE_READ : PAGE_READWRITE, &oldProtect);
+#elif defined(__APPLE__)
+    pthread_jit_write_protect_np(is_executable);
 #else
     static const size_t pageSize = sysconf(_SC_PAGESIZE);
     const size_t iaddr = reinterpret_cast<size_t>(base);
@@ -90,17 +92,11 @@ void BlockOfCode::EnableWriting() {
 #ifdef DYNARMIC_ENABLE_NO_EXECUTE_SUPPORT
     ProtectMemory(GetCodePtr(), TOTAL_CODE_SIZE, false);
 #endif
-#ifdef __APPLE__
-    pthread_jit_write_protect_np(false);
-#endif
 }
 
 void BlockOfCode::DisableWriting() {
 #ifdef DYNARMIC_ENABLE_NO_EXECUTE_SUPPORT
     ProtectMemory(GetCodePtr(), TOTAL_CODE_SIZE, true);
-#endif
-#ifdef __APPLE__
-    pthread_jit_write_protect_np(true);
 #endif
 }
 

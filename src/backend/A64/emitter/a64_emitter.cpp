@@ -366,12 +366,10 @@ void ARM64XEmitter::FlushIcacheSection(const u8* start, const u8* end) {
     if (start == end)
         return;
 
-#if defined(IOS)
+#if defined(__APPLE__)
     // Header file says this is equivalent to: sys_icache_invalidate(start, end -
     // start);
-    sys_cache_control(kCacheFunctionPrepareForExecution, start, end - start);
-#elif defined(__APPLE__)
-    sys_icache_invalidate(const_cast<u8*>(start), end - start);
+    sys_cache_control(kCacheFunctionPrepareForExecution, const_cast<u8*>(start), end - start);
 #else
     // Don't rely on GCC's __clear_cache implementation, as it caches
     // icache/dcache cache line sizes, that can vary between cores on
