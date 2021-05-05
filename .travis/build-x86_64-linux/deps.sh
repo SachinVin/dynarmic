@@ -3,6 +3,12 @@
 set -e
 set -x
 
+sudo apt-get update
+sudo apt-get install \
+	gcc-${GCC_VERSION} \
+	g++-${GCC_VERSION} \
+	ninja-build
+
 # TODO: This isn't ideal.
 cd externals
 git clone https://github.com/MerryMage/ext-boost

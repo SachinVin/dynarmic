@@ -1,6 +1,5 @@
 # Built files
 build/
-build-*/
 docs/Doxygen/
 .vs/
 # Generated files
