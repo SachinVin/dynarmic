@@ -1,0 +1,90 @@
+name: dynarmic-ci
+
+on:
+  push:
+    branches: [ "*" ]
+    tags: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  linux-x86_64-gcc:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        gcc-ver: [7, 8]
+    env: 
+      GCC_VERSION: ${{ matrix.gcc-ver }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Deps
+        run: ./.travis/build-x86_64-linux/deps.sh
+      - name: Build
+        run: ./.travis/build-x86_64-linux/build.sh
+  linux-aarch64-gcc-8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Deps apt-get
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            gcc-8-aarch64-linux-gnu \
+            g++-8-aarch64-linux-gnu \
+            ninja-build \
+            qemu-user
+      - name: Deps
+        run: ./.travis/build-aarch64-linux/deps.sh
+      - name: Build
+        run: ./.travis/build-aarch64-linux/build.sh
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ["sse3-only-on-x86_64-linux", "test-with-unicorn-on-x86_64-linux"]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Deps apt-get
+        run: |
+          sudo apt-get install \
+            gcc-7 \
+            g++-7 \
+            llvm-dev \
+            ninja-build
+      - name: Deps
+        run: ./.travis/${{ matrix.image }}/deps.sh
+      - name: Build
+        run: ./.travis/${{ matrix.image }}/build.sh
+  macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: ["x86_64", "aarch64"]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Deps
+        run: ./.travis/build-${{ matrix.arch }}-macos/deps.sh
+      - name: Build
+        run: ./.travis/build-${{ matrix.arch }}-macos/build.sh
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Deps
+        run: ./.travis/build-x86_64-windows/deps.sh
+        shell: bash
+      - name: Set up MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Build
+        run: ./.travis/build-x86_64-windows/build.sh
+        shell: bash
