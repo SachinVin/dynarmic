@@ -31,6 +31,7 @@ jobs:
           submodules: recursive
       - name: Deps apt-get
         run: |
+          sudo apt-get update
           sudo apt-get install \
             gcc-8-aarch64-linux-gnu \
             g++-8-aarch64-linux-gnu \
@@ -55,21 +56,24 @@ jobs:
             gcc-7 \
             g++-7 \
             llvm-dev \
-            ninja-build \
+            ninja-build
       - name: Deps
         run: ./.travis/${{ matrix.image }}/deps.sh
       - name: Build
         run: ./.travis/${{ matrix.image }}/build.sh
   macos:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: ["x86_64", "aarch64"]
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
       - name: Deps
-        run: ./.travis/build-x86_64-macos/deps.sh
+        run: ./.travis/build-${{ matrix.arch }}-macos/deps.sh
       - name: Build
-        run: ./.travis/build-x86_64-macos/build.sh
+        run: ./.travis/build-${{ matrix.arch }}-macos/build.sh
   windows:
     runs-on: windows-latest
     steps:
