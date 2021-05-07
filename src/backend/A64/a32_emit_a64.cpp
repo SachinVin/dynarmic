@@ -292,18 +292,18 @@ void A32EmitA64::GenTerminalHandlers() {
     const ARM64Reg location_descriptor_reg = X20;
 
     // PC ends up in fast_dispatch_entry_reg, location_descriptor ends up in location_descriptor_reg.
-    const auto calculate_location_descriptor = [this, fast_dispatch_entry_reg, location_descriptor_reg] {
+    const auto calculate_location_descriptor = [this](ARM64Reg fast_dispatch_entry_reg_, ARM64Reg location_descriptor_reg_) {
         // This calculation has to match up with IREmitter::PushRSB
-        code.LDR(INDEX_UNSIGNED, DecodeReg(location_descriptor_reg), X28, offsetof(A32JitState, upper_location_descriptor));
-        code.LDR(INDEX_UNSIGNED, DecodeReg(fast_dispatch_entry_reg), X28, MJitStateReg(A32::Reg::PC));
-        code.ORR(location_descriptor_reg, fast_dispatch_entry_reg, location_descriptor_reg, ArithOption{location_descriptor_reg, ST_LSL, 32});
+        code.LDR(INDEX_UNSIGNED, DecodeReg(location_descriptor_reg_), X28, offsetof(A32JitState, upper_location_descriptor));
+        code.LDR(INDEX_UNSIGNED, DecodeReg(fast_dispatch_entry_reg_), X28, MJitStateReg(A32::Reg::PC));
+        code.ORR(location_descriptor_reg_, fast_dispatch_entry_reg_, location_descriptor_reg_, ArithOption{location_descriptor_reg_, ST_LSL, 32});
     };
 
     FixupBranch fast_dispatch_cache_miss, rsb_cache_miss;
 
     code.AlignCode16();
     terminal_handler_pop_rsb_hint = code.GetCodePtr();
-    calculate_location_descriptor();
+    calculate_location_descriptor(fast_dispatch_entry_reg, location_descriptor_reg);
     code.LDR(INDEX_UNSIGNED, DecodeReg(code.ABI_SCRATCH1), X28, offsetof(A32JitState, rsb_ptr));
     code.SUBI2R(code.ABI_SCRATCH1, DecodeReg(code.ABI_SCRATCH1), 1);
     code.ANDI2R(code.ABI_SCRATCH1, DecodeReg(code.ABI_SCRATCH1), u32(A32JitState::RSBPtrMask));
@@ -324,7 +324,7 @@ void A32EmitA64::GenTerminalHandlers() {
 
     if (config.enable_fast_dispatch) {
         terminal_handler_fast_dispatch_hint = code.AlignCode16();
-        calculate_location_descriptor();
+        calculate_location_descriptor(fast_dispatch_entry_reg, location_descriptor_reg);
         code.SetJumpTarget(rsb_cache_miss);
         code.MOVI2R(code.ABI_SCRATCH1, reinterpret_cast<u64>(fast_dispatch_table.data()));
         code.CRC32CW(DecodeReg(fast_dispatch_entry_reg), DecodeReg(fast_dispatch_entry_reg), DecodeReg(code.ABI_SCRATCH1));
