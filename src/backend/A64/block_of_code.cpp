@@ -51,7 +51,7 @@ constexpr size_t TOTAL_CODE_SIZE = 128 * 1024 * 1024;
 constexpr size_t FAR_CODE_OFFSET = 100 * 1024 * 1024;
 
 #ifdef DYNARMIC_ENABLE_NO_EXECUTE_SUPPORT
-void ProtectMemory(const void* base, size_t size, bool is_executable) {
+void ProtectMemory([[maybe_unused]] const void* base, [[maybe_unused]] size_t size, bool is_executable) {
 #if defined(_WIN32)
     DWORD oldProtect = 0;
     VirtualProtect(const_cast<void*>(base), size, is_executable ? PAGE_EXECUTE_READ : PAGE_READWRITE, &oldProtect);
