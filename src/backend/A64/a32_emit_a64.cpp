@@ -1584,6 +1584,9 @@ void A32EmitA64::EmitPatchMovX0(CodePtr target_code_ptr) {
 void A32EmitA64::Unpatch(const IR::LocationDescriptor& location) {
     EmitA64::Unpatch(location);
     if (config.enable_fast_dispatch) {
+        code.DisableWriting();
+        SCOPE_EXIT { code.EnableWriting(); };
+
         (*fast_dispatch_table_lookup)(location.Value()) = {};
     }
 }
