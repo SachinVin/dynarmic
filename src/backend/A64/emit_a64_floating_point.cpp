@@ -19,9 +19,9 @@
 #include "common/fp/op.h"
 #include "common/fp/rounding_mode.h"
 #include "common/fp/util.h"
-#include "frontend/ir/basic_block.h"
-#include "frontend/ir/microinstruction.h"
-#include "frontend/ir/opcodes.h"
+#include "ir/basic_block.h"
+#include "ir/microinstruction.h"
+#include "ir/opcodes.h"
 
 namespace Dynarmic::BackendA64 {
 

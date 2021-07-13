@@ -18,8 +18,8 @@
 #include "backend/A64/emitter/a64_emitter.h"
 #include "common/bit_util.h"
 #include "common/fp/rounding_mode.h"
-#include "frontend/ir/location_descriptor.h"
-#include "frontend/ir/terminal.h"
+#include "ir/location_descriptor.h"
+#include "ir/terminal.h"
 
 namespace Dynarmic::IR {
 class Block;

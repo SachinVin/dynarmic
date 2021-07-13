@@ -6,8 +6,8 @@
 
 #include "backend/A64/block_of_code.h"
 #include "backend/A64/emit_a64.h"
-#include "frontend/ir/microinstruction.h"
-#include "frontend/ir/opcodes.h"
+#include "ir/microinstruction.h"
+#include "ir/opcodes.h"
 
 namespace Dynarmic::BackendA64 {
 
